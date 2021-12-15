@@ -8,14 +8,14 @@ import tensorflow as tf
 from tensorflow.keras import backend as K
 from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing.image import array_to_img
-from tensorflow.keras.callbacks import ModelCheckpoint, TensorBoard
+from tensorflow.keras.callbacks import ModelCheckpoint, TensorBoard, EarlyStopping
 from tensorflow.keras.optimizers import Adam
 
 from skimage.metrics import structural_similarity
 from skimage.metrics import peak_signal_noise_ratio
 
 
-def train(model_str, model_f, all_snr, compression_ratios, x_train, x_test, nb_epoch, batch_size):
+def train(model_str, model_f, all_snr, compression_ratios, x_train, x_test):
     for snr in all_snr:
         for comp_ratio in compression_ratios:
             tf.keras.backend.clear_session()
@@ -33,6 +33,7 @@ def train(model_str, model_f, all_snr, compression_ratios, x_train, x_test, nb_e
                                          monitor = 'val_loss', save_best_only = True)
 
             ckpt = ModelCheckponitsHandler(model_str, comp_ratio, snr, model, step=50)
+            earlystop = EarlyStopping(monitor='accuracy', patience=5)
 
             K.set_value(model.get_layer('normalization_noise').snr_db, snr)
             model.compile(optimizer=Adam(learning_rate=0.001), loss='mse', metrics=['accuracy'])
@@ -40,8 +41,8 @@ def train(model_str, model_f, all_snr, compression_ratios, x_train, x_test, nb_e
 
             # train model
             start = time.perf_counter()
-            model.fit(x=x_train, y=x_train, batch_size=batch_size, epochs=nb_epoch,
-                      callbacks=[tb, checkpoint, ckpt], validation_data=(x_test, x_test))
+            model.fit(x=x_train, y=x_train, batch_size=64,
+                      callbacks=[tb, checkpoint, ckpt, earlystop], validation_data=(x_test, x_test))
             end = time.perf_counter()
             print('The NN has trained ' + str(end - start) + ' s')
             print('============ FINISH {0}_CompRation{1}_SNR{2} ============'.format(model_str, comp_ratio, snr))
