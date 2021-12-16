@@ -510,7 +510,7 @@ def model12(snr, comp_ratio, F=1):
     e_output = PReLU(name='e_output')(e2)
 
     ############################### NOISE ##############################
-    c_output = NormalizationNoise(snr)(e_output)
+    c_output = NormalizationNoise()(e_output)
     ############################### Building Decoder ##############################
     decoder = Conv2DTranspose(filters=50, kernel_size=(1,1), strides=1,
                               padding='same', kernel_initializer='he_normal')(c_output)

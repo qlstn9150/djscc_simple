@@ -37,7 +37,7 @@ def comp_plot(metric, model_str, snr_train):
         plt.ylim(0.4, 1)
     plt.grid(True)
     plt.legend(loc='lower right')
-    os.makedirs('./plot/plot1_{0}}'.format(metric), exist_ok=True)
+    os.makedirs('./plot/plot1_{0}'.format(metric), exist_ok=True)
     plt.savefig('./plot/plot1_{0}/{1}_CompRatio{2}_SNR{3}.png'.format(metric, model_str, compression_ratios, snr_train))
     plt.show()
 

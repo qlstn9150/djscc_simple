@@ -15,7 +15,8 @@ def train(model_str, model_f, all_snr, compression_ratios, x_train, x_test, batc
             tf.keras.backend.clear_session()
 
             # load model
-            model = model_f(snr, comp_ratio)
+            model = model_f(comp_ratio, F=5)
+            #model = model_f(snr, comp_ratio)
             model.summary()
 
             os.makedirs('./Tensorboard/{0}'.format(model_str), exist_ok=True)
