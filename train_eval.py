@@ -15,7 +15,7 @@ from skimage.metrics import structural_similarity
 from skimage.metrics import peak_signal_noise_ratio
 
 
-def train(model_str, model_f, all_snr, compression_ratios, x_train, x_test):
+def train(model_str, model_f, all_snr, compression_ratios, x_train, x_test, batch_size, epochs):
     for snr in all_snr:
         for comp_ratio in compression_ratios:
             tf.keras.backend.clear_session()
@@ -33,7 +33,7 @@ def train(model_str, model_f, all_snr, compression_ratios, x_train, x_test):
                                          monitor = 'val_loss', save_best_only = True)
 
             ckpt = ModelCheckponitsHandler(model_str, comp_ratio, snr, model, step=50)
-            earlystop = EarlyStopping(monitor='accuracy', patience=5)
+            #earlystop = EarlyStopping(monitor='accuracy', patience=5)
 
             K.set_value(model.get_layer('normalization_noise').snr_db, snr)
             model.compile(optimizer=Adam(learning_rate=0.001), loss='mse', metrics=['accuracy'])
@@ -41,16 +41,17 @@ def train(model_str, model_f, all_snr, compression_ratios, x_train, x_test):
 
             # train model
             start = time.perf_counter()
-            model.fit(x=x_train, y=x_train, batch_size=64,
-                      callbacks=[tb, checkpoint, ckpt, earlystop], validation_data=(x_test, x_test))
+            model.fit(x=x_train, y=x_train, batch_size=batch_size, epochs=epochs,
+                      callbacks=[tb, checkpoint, ckpt], validation_data=(x_test, x_test))
             end = time.perf_counter()
+
             print('The NN has trained ' + str(end - start) + ' s')
             print('============ FINISH {0}_CompRation{1}_SNR{2} ============'.format(model_str, comp_ratio, snr))
             print('\n')
             print('\n')
 
 #save image
-def comp_eval(model, compression_ratios, snr_train, x_test, testX):
+def comp_eval(model, x_test, testX, compression_ratios, snr_train):
     for snr in snr_train:
         model_dic = {'Pred_Images': [], 'PSNR': [], 'SSIM': []}
         for comp_ratio in compression_ratios:
@@ -77,6 +78,7 @@ def comp_eval(model, compression_ratios, snr_train, x_test, testX):
             print('SSIM = ', ssim)
             print('\n')
 
+        os.makedirs('./result_txt/plot1', exist_ok=True)
         path = './result_txt/plot1/{0}_SNR{1}.txt'.format(model, snr)
         with open(path, 'w') as f:
             print(compression_ratios, '\n', model_dic['PSNR'], '\n', model_dic['SSIM'], file=f)
@@ -86,7 +88,7 @@ def comp_eval(model, compression_ratios, snr_train, x_test, testX):
     original_images.save('./img/original.jpg')
 
 
-def test_eval(model, x_test, compression_ratios, snr_train, snr_test, testX):
+def test_eval(model, x_test, testX, compression_ratios, snr_train, snr_test):
     for comp_ratio in compression_ratios:
         for snr in snr_train:
             model_dic = {'Test_snr': [], 'PSNR': []}
@@ -105,6 +107,7 @@ def test_eval(model, x_test, compression_ratios, snr_train, snr_test, testX):
                 print('PSNR = ', psnr)
                 print('\n')
 
+            os.makedirs('./result_txt/plot2', exist_ok=True)
             path = './result_txt/plot2/{0}_CompRatio{1}_SNR{2}.txt'.format(model, comp_ratio, snr)
             with open(path, 'w') as f:
                 print(snr_test, '\n', model_dic['PSNR'], file=f)

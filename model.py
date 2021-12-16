@@ -258,10 +258,6 @@ def model6(comp_ratio, F=5):
     model = Model(input_images, d_output)
     return model
 
-
-
-
-
 # change encoder + symmetric
 def model1(snr, comp_ratio, F=5):
     input_images = Input(shape=(32, 32, 3))
@@ -289,7 +285,6 @@ def model1(snr, comp_ratio, F=5):
     ############################### Buliding Models ###############################
     model = Model(input_images, d_output)
     return model
-
 
 # change decoder(simple)
 def model8(snr, comp_ratio, F=5):

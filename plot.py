@@ -6,7 +6,7 @@ import cv2
 import os
 
 
-def comp_psnr_plot(model_str, snr_train):
+def comp_plot(metric, model_str, snr_train):
     colors = list(mcolors.TABLEAU_COLORS)
     markers = ['o', 's']
     ls = ['--', '-']
@@ -19,24 +19,30 @@ def comp_psnr_plot(model_str, snr_train):
                 text = f.read()
                 compression_ratios = text.split('\n')[0]
                 compression_ratios = json.loads(compression_ratios)
-                psnr = text.split('\n')[1]
-                psnr = json.loads(psnr)
+                if metric == 'psnr':
+                    psnr = text.split('\n')[1]
+                    metric_score = json.loads(psnr)
+                else:
+                    ssim = text.split('\n')[2]
+                    metric_score = json.loads(ssim)
             label = '{0} (SNR={1}dB)'.format(model, snr)
-            plt.plot(compression_ratios, psnr, ls=ls[i], c=colors[j], marker=markers[i], label=label)
-            #plt.plot(compression_ratios, psnr, ls='-', c=colors[i], marker='o', label=label)
+            plt.plot(compression_ratios, metric_score, ls=ls[i], c=colors[j], marker=markers[i], label=label)
             j += 1
         i += 1
     plt.title('AWGN Channel')
     plt.xlabel('k/n')
-    plt.ylabel('PSNR (dB)')
-    plt.ylim(0, 35)
+    plt.ylabel(metric)
+    if metric == 'psnr':
+        plt.ylim(0, 35)
+    else:
+        plt.ylim(0.4, 1)
     plt.grid(True)
     plt.legend(loc='lower right')
-    os.makedirs('./plot/plot1_psnr', exist_ok=True)
-    plt.savefig('./plot/plot1_psnr/{0}_CompRatio{1}_SNR{2}.png'.format(model_str, compression_ratios, snr_train))
+    os.makedirs('./plot/plot1_{0}}'.format(metric), exist_ok=True)
+    plt.savefig('./plot/plot1_{0}/{1}_CompRatio{2}_SNR{3}.png'.format(metric, model_str, compression_ratios, snr_train))
     plt.show()
 
-def comp_ssim_plot(model_str, snr_train):
+'''def comp_ssim_plot(model_str, snr_train):
     colors = list(mcolors.TABLEAU_COLORS)
     markers = ['o', 's']
     ls = ['--', '-']
@@ -64,7 +70,7 @@ def comp_ssim_plot(model_str, snr_train):
     plt.legend(loc='lower right')
     os.makedirs('./plot/plot1_ssim', exist_ok=True)
     plt.savefig('./plot/plot1_ssim/{0}_CompRatio{1}_SNR{2}.png'.format(model_str, compression_ratios, snr_train))
-    plt.show()
+    plt.show()'''
 
 def all_model_compare(metric, model_str, snr_train):
     colors = list(mcolors.TABLEAU_COLORS)
@@ -100,7 +106,7 @@ def all_model_compare(metric, model_str, snr_train):
         plt.savefig('./plot/plot1_{0}/{1}_CompRatio{2}_SNR{3}.png'.format(metric, model_str, compression_ratios, snr_train))
         plt.show()
 
-def test_plot(model_str, compression_ratios, snr_train):
+def test_plot(model_str, snr_train, compression_ratios):
     for comp_ratio in compression_ratios:
         colors = list(mcolors.TABLEAU_COLORS)
         markers = ['o', 's']
@@ -141,7 +147,7 @@ def all_img(model):
         ax.axes.xaxis.set_ticks([])
         ax.axes.yaxis.set_ticks([])
 
-        label = filename.replace('./img/{0}\pred_'.format(model), '')
+        label = filename.replace('./img/{0}/pred_'.format(model), '')
         label = label.replace('.jpg', '')
         print(label)
         ax.set_xlabel(label)
