@@ -1,11 +1,12 @@
+import os
+import numpy as np
 import tensorflow as tf
 import tensorflow.keras.backend as K
 from tensorflow.keras.layers import Add, BatchNormalization, Conv2D, Conv2D, Cropping2D, concatenate, Dense
 from tensorflow.keras.layers import Input, Layer, UpSampling2D, Flatten, Conv2DTranspose
 from tensorflow.keras.layers import PReLU
 from tensorflow.keras.models import Model
-import numpy as np
-import os
+
 
 
 def normalize_pixels(train_data, test_data):

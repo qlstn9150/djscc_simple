@@ -1,10 +1,9 @@
-import matplotlib.pyplot as plt
-import matplotlib.colors as mcolors
 import json
 import glob
 import cv2
 import os
-
+import matplotlib.pyplot as plt
+import matplotlib.colors as mcolors
 
 def comp_plot(metric, model_str, snr_train):
     colors = list(mcolors.TABLEAU_COLORS)

@@ -1,19 +1,13 @@
-import os
-#os.environ['CUDA_VISIBLE_DEVICES'] = '2'
-
-from model import *
-
 import time
-import tensorflow as tf
-from tensorflow.keras import backend as K
 from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing.image import array_to_img
-from tensorflow.keras.callbacks import ModelCheckpoint, TensorBoard, EarlyStopping
+from tensorflow.keras.callbacks import ModelCheckpoint, TensorBoard
 from tensorflow.keras.optimizers import Adam
 
 from skimage.metrics import structural_similarity
 from skimage.metrics import peak_signal_noise_ratio
 
+from model import *
 
 def train(model_str, model_f, all_snr, compression_ratios, x_train, x_test, batch_size, epochs):
     for snr in all_snr:

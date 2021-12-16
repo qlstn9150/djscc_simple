@@ -15,7 +15,7 @@ model = 'model12'
 model_f = model12
 snr_train = [0, 10, 20]
 snr_test = [2, 4, 7, 10, 13, 16, 18, 22, 25, 27] #[2, 10, 18, 26]
-compression_ratios = [0.06, 0.26, 0.49] #0.06, 0.26, 0.49
+compression_ratios = [0.26, 0.49] #0.06, 0.26, 0.49
 
 ### TRAIN & EVALAUATION ###
 train(model, model_f, snr_train, compression_ratios, x_train, x_test, batch_size=100, epochs=20)
