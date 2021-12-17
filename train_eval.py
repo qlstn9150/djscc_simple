@@ -82,7 +82,6 @@ def comp_eval(model, x_test, testX, compression_ratios, snr_train):
     original_images = array_to_img(x_test[6,])
     original_images.save('./img/original.jpg')
 
-
 def test_eval(model, x_test, testX, compression_ratios, snr_train, snr_test):
     for comp_ratio in compression_ratios:
         for snr in snr_train:
