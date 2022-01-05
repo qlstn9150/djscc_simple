@@ -98,7 +98,7 @@ def all_model_compare(metric, model_str, snr_train):
     for snr in snr_train:
         j = 0
         for model in model_str:
-            path = './result_txt/plot1/{0}_SNR{1}.txt'.format(model, snr)
+            path = './result_txt/plot1/{0}/SNR{1}.txt'.format(model, snr)
             with open(path, 'r') as f:
                 text = f.read()
                 compression_ratios = text.split('\n')[0]
