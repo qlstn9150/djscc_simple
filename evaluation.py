@@ -64,7 +64,7 @@ def test_eval(model, x_test, testX, compression_ratios, snr_train, snr_test):
                 model_dic['Test_snr'].append(snr_t)
                 model_dic['PSNR'].append(psnr)
                 model_dic['SSIM'].append(ssim)
-                print('Test SNR =  ', comp_ratio)
+                print('Test SNR =  ', snr_t)
                 print('PSNR = ', psnr)
                 print('SSIM = ', ssim)
                 print('\n')
