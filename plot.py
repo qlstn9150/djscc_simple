@@ -56,8 +56,8 @@ def comp_plot(metric, model_str, snr_train):
     else:
         colors = list(mcolors.BASE_COLORS)
 
-    markers = ['^', 's', 'o']
-    ls = [':', '--', '-']
+    markers = ['o', 's', '^']
+    ls = ['-', '--', ':']
     i = 0
     for model in model_str:
         j = 0
@@ -81,7 +81,7 @@ def comp_plot(metric, model_str, snr_train):
     plt.xlabel('k/n')
     plt.ylabel(metric)
     if metric == 'psnr':
-        plt.ylim(10, 30)
+        plt.ylim(0, 30)
     else:
         plt.ylim(0, 1)
     plt.grid(True)
