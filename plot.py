@@ -9,46 +9,6 @@ import cv2
 
 from model import *
 
-def mini_comp_plot(metric, model_str, snr_train, min, max, title):
-    if metric == 'psnr':
-        colors = list(mcolors.TABLEAU_COLORS)
-    else:
-        colors = list(mcolors.BASE_COLORS)
-
-    markers = ['s', '^', 'o']
-    ls = [':', '--', '-']
-    i = 0
-    for model in model_str:
-        j = 0
-        for snr in snr_train:
-            path = './result_txt/plot1/{0}/SNR{1}.txt'.format(model, snr)
-            with open(path, 'r') as f:
-                text = f.read()
-                compression_ratios = text.split('\n')[0]
-                compression_ratios = json.loads(compression_ratios)
-                if metric == 'psnr':
-                    psnr = text.split('\n')[1]
-                    metric_score = json.loads(psnr)
-                else:
-                    ssim = text.split('\n')[2]
-                    metric_score = json.loads(ssim)
-            #label = '{0} (SNR={1}dB)'.format(model, snr)
-            label = model
-            plt.plot(compression_ratios, metric_score, ls='-', c=colors[i], marker='o', label=label)
-            j += 1
-        i += 1
-    plt.title('AWGN Channel {0}'.format(title))
-    plt.xlabel('k/n')
-    plt.ylabel(metric)
-    if metric == 'psnr':
-        plt.ylim(min, max)
-    else:
-        plt.ylim(0, 1)
-    plt.grid(True)
-    plt.legend(loc='upper left')
-    os.makedirs('./plot/plot1_{0}'.format(metric), exist_ok=True)
-    plt.savefig('./plot/plot1_{0}/{1}_CompRatio{2}_SNR{3}.png'.format(metric, model_str, compression_ratios, snr_train))
-    plt.show()
 
 def comp_plot(metric, model_str, snr_train):
     if metric == 'psnr':
@@ -98,9 +58,9 @@ def test_plot(metric, model_str, snr_train, compression_ratios):
         else:
             colors = list(mcolors.BASE_COLORS)
             #colors = colors[3:]
-        markers = ['^', 's', 'o']
+        markers = ['o', 's', '^']
         i = 0
-        ls = [':', '--', '-']
+        ls = ['-', '--', ':']
         for model in model_str:
             j = 0
             for snr in snr_train:

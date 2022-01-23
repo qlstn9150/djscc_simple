@@ -8,7 +8,7 @@ from skimage.metrics import structural_similarity
 from skimage.metrics import peak_signal_noise_ratio
 
 from model import *
-
+from train import psnr
 
 def comp_eval(model, x_test, testX, compression_ratios, snr_train):
     for snr in snr_train:
@@ -17,7 +17,8 @@ def comp_eval(model, x_test, testX, compression_ratios, snr_train):
             tf.keras.backend.clear_session()
             print('==============={0}_CompRation{1}_SNR{2}============'.format(model, comp_ratio, snr))
             path = './checkpoints/{0}/CompRatio{1}_SNR{2}.h5'.format(model, comp_ratio, snr)
-            autoencoder = load_model(path, custom_objects={'NormalizationNoise': NormalizationNoise})
+
+            autoencoder = load_model(path, custom_objects={'NormalizationNoise': NormalizationNoise, 'psnr':psnr})
             K.set_value(autoencoder.get_layer('normalization_noise').snr_db, snr)
 
             pred_images = autoencoder.predict(x_test) * 255
@@ -27,13 +28,13 @@ def comp_eval(model, x_test, testX, compression_ratios, snr_train):
             sample_images = array_to_img(pred_images[6,])
             sample_images.save('./img/{0}/pred_CompRatio{1}_SNR{2}.jpg'.format(model, comp_ratio, snr))
 
-            psnr = peak_signal_noise_ratio(testX, pred_images)
+            psnr_v = peak_signal_noise_ratio(testX, pred_images)
             ssim = structural_similarity(testX, pred_images, multichannel=True)
 
-            model_dic['PSNR'].append(psnr)
+            model_dic['PSNR'].append(psnr_v)
             model_dic['SSIM'].append(ssim)
             print('Comp_Ratio = ', comp_ratio)
-            print('PSNR = ', psnr)
+            print('PSNR = ', psnr_v)
             print('SSIM = ', ssim)
             print('\n')
 
